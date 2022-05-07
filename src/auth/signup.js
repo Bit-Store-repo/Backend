@@ -4,6 +4,13 @@ require('dotenv').config()
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+// uuid
+// uuid generates random but unique 16 digit id
+const { v4: uuidv4 } = require('uuid');
+
+// redis
+const redisClient = require('../dbConnect/redisDB');
+
 const express = require('express');
 const auth = express();
 
@@ -25,8 +32,9 @@ auth.post('/', (req, res) => {
             try {
                 if (docs.length == 0) {
 
-                    bcrypt.genSalt(saltRounds, (err, salt) => {
-                        bcrypt.hash(req.body.password, salt, (err, hash) => {
+                    bcrypt.genSalt(saltRounds, async (err, salt) => {
+                        bcrypt.hash(req.body.password, salt, async (err, hash) => {
+
                             const newUser = new User({
                                 email: req.body.email,
                                 userName: req.body.userName,
@@ -34,10 +42,33 @@ auth.post('/', (req, res) => {
                                 profPic: req.body.profPic,
                             });
 
-                            newUser.save();
+                            await newUser.save();
 
-                            res.status(200).json(newUser);
-                            return;
+                            User.find({ email: req.body.email }).exec(async (err, docs) => {
+                                if (err) {
+                                    console.log(err);
+                                    res.status(400).json({ message: "server error" });
+                                    return;
+                                }
+                                else {
+                                    await redisClient.connect();
+                                    const redisKey = uuidv4();
+                                    const id = docs[0]._id.toString();
+                                    await redisClient.set(id, redisKey);
+                                    await redisClient.quit();
+
+                                    const userData = {
+                                        "_id": docs[0]._id.toString(),
+                                        "email": docs[0].email,
+                                        "userName": docs[0].userName,
+                                        "profPic": docs[0].profPic,
+                                        "key": redisKey
+                                    }
+
+                                    res.status(200).json(userData);
+                                    return;
+                                }
+                            });
                         });
                     });
                 }
