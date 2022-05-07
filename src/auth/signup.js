@@ -40,6 +40,7 @@ auth.post('/', (req, res) => {
                                 userName: req.body.userName,
                                 password: hash,
                                 profPic: req.body.profPic,
+                                verified: false
                             });
 
                             await newUser.save();
@@ -62,7 +63,8 @@ auth.post('/', (req, res) => {
                                         "email": docs[0].email,
                                         "userName": docs[0].userName,
                                         "profPic": docs[0].profPic,
-                                        "key": redisKey
+                                        "key": redisKey,
+                                        "verified": docs[0].verified
                                     }
 
                                     res.status(200).json(userData);

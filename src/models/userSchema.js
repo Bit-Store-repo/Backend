@@ -5,6 +5,8 @@ const bdBoi = mongoose.Schema({
     userName: String,
     password: String,
     profPic: String,
+    key: String,
+    verified: Boolean
 });
 
 module.exports = mongoose.model('user', bdBoi);

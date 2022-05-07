@@ -46,7 +46,8 @@ auth.post('/', (req, res) => {
                             "email": docs[0].email,
                             "userName": docs[0].userName,
                             "profPic": docs[0].profPic,
-                            "key": redisKey
+                            "key": redisKey,
+                            "verified": docs[0].verified
                         }
 
                         await redisClient.quit();

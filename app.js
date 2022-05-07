@@ -9,10 +9,12 @@ mongoConnect();
 const signupRouter = require('./src/auth/signup');
 const loginRouter = require('./src/auth/login');
 const logoutRouter = require('./src/auth/logout');
+const forgotRouter = require('./src/auth/forgot');
 
 app.use('/signup', signupRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
+app.use('/resetpassword', forgotRouter);
 
 app.listen(PORT, () => {
     console.log(`app is running on ${PORT}`);
