@@ -11,6 +11,9 @@ const { v4: uuidv4 } = require('uuid');
 // redis
 const redisClient = require('../dbConnect/redisDB');
 
+// requiring the mail function
+const sendMail = require('../authEmail');
+
 const express = require('express');
 const auth = express();
 
@@ -86,6 +89,27 @@ auth.post('/', (req, res) => {
         }
     });
 
+});
+
+
+auth.post('/resendotp', async (req, res) => {
+    try {
+        await redisClient.connect();
+
+        const forgotKey = Math.floor(100000 + Math.random() * 900000);
+        await redisClient.set(req.body.email, forgotKey);
+
+        await redisClient.quit();
+
+        sendMail(req.body.email, 'resetPassword', forgotKey);
+        res.status(200).json({ message: `reset email sent to ${req.body.email}` });
+
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({ message: "server error" });
+        return;
+    }
 });
 
 module.exports = auth;

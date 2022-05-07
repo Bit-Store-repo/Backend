@@ -12,7 +12,7 @@ const saltRounds = 10;
 const { v4: uuidv4 } = require('uuid');
 
 // requiring the mail function
-const sendMail = require('./authEmail');
+const sendMail = require('../authEmail');
 
 // redis
 const redisClient = require('../dbConnect/redisDB');
