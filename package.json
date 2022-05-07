@@ -1,0 +1,31 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bit-Store-repo/Backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bit-Store-repo/Backend/issues"
+  },
+  "homepage": "https://github.com/Bit-Store-repo/Backend#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.20.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.1",
+    "mongodb": "^4.5.0",
+    "mongoose": "^6.3.2",
+    "nodemon": "^2.0.16",
+    "redis": "^4.1.0"
+  }
+}
