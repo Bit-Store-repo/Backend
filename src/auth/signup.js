@@ -37,13 +37,15 @@ auth.post('/', (req, res) => {
 
                     bcrypt.genSalt(saltRounds, async (err, salt) => {
                         bcrypt.hash(req.body.password, salt, async (err, hash) => {
-
+                            const profPic = "https://www.icmetl.org/wp-content/uploads/2020/11/user-icon-human-person-sign-vector-10206693.png";
+                            const userName = req.body.email.substring(0, req.body.email.indexOf("@"));
                             const newUser = new User({
                                 email: req.body.email,
-                                userName: req.body.userName,
+                                userName: userName,
                                 password: hash,
-                                profPic: req.body.profPic,
-                                verified: false
+                                profPic: profPic,
+                                verified: false,
+                                key: uuidv4(),
                             });
 
                             await newUser.save();
@@ -66,7 +68,7 @@ auth.post('/', (req, res) => {
                                         "email": docs[0].email,
                                         "userName": docs[0].userName,
                                         "profPic": docs[0].profPic,
-                                        "key": redisKey,
+                                        "key": docs[0].key,
                                         "verified": docs[0].verified
                                     }
 

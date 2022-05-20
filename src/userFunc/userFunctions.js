@@ -119,7 +119,8 @@ auth.patch('/verify', (req, res) => {
                         await redisClient.quit();
 
                         const updated = await User.updateOne({ email: req.body.email }, { $set: { verified: true } });
-                        res.status(200).json({ message: `email verified` });
+                        const sendData = await User.findOne({ email: req.body.email });
+                        res.status(200).json(sendData);
                         return;
 
                     }
@@ -172,7 +173,8 @@ auth.patch('/profilepic', upload.single('ppic'), async (req, res) => {
                     });
 
                     const updated = await User.updateOne({ email: req.body.email }, { $set: { profPic: uploadLink } });
-                    res.status(200).json({ message: `image updated` });
+                    const sendData = await User.findOne({ email: req.body.email });
+                    res.status(200).json(sendData);
                     return;
                 }
             }
@@ -200,7 +202,8 @@ auth.patch('/username', async (req, res) => {
                 }
                 else {
                     const updated = await User.updateOne({ email: req.body.email }, { $set: { userName: req.body.userName } });
-                    res.status(200).json({ message: `username updated` });
+                    const sendData = await User.findOne({ email: req.body.email });
+                    res.status(200).json(sendData);
                     return;
                 }
             }
@@ -235,11 +238,11 @@ auth.post('/checkpassword', (req, res) => {
                         await redisClient.set(req.body.email, redisKey);
                         await redisClient.quit();
 
-                        res.status(200).json({ message: `correct`, key: redisKey });
+                        res.status(200).json({ message: `correct`, changeKey: redisKey });
                         return;
                     }
                     else {
-                        res.status(200).json({ message: `incorrect` });
+                        res.status(200).json({ message: `incorrect password` });
                         return;
                     }
                 }
@@ -278,7 +281,8 @@ auth.patch('/mail', (req, res) => {
                         await redisClient.quit();
 
                         const updated = await User.updateOne({ email: req.body.email }, { $set: { email: req.body.newEmail, verified: false } });
-                        res.status(200).json({ message: `mail updated` });
+                        const sendData = await User.findOne({ email: req.body.newEmail });
+                        res.status(200).json(sendData);
                         return;
 
                     }
@@ -326,10 +330,22 @@ auth.patch('/password', (req, res) => {
                         await redisClient.del(req.body.email);
                         await redisClient.quit();
 
-                        const hash = bcrypt.hashSync(req.body.password, saltRounds);
-
-                        const updated = await User.updateOne({ email: req.body.email }, { $set: { password: hash } });
-                        res.status(200).json({ message: `password updated` });
+                        bcrypt.genSalt(saltRounds, async (err, salt) => {
+                            if (err) {
+                                res.status(400).json({ message: "server error" });
+                                return;
+                            }
+                            bcrypt.hash(req.body.password, salt, async (err, hash) => {
+                                if (err) {
+                                    res.status(400).json({ message: "server error" });
+                                }
+                                else {
+                                    const updated = await User.updateOne({ email: req.body.email }, { $set: { password: hash } });
+                                    const sendData = await User.findOne({ email: req.body.email });
+                                    res.status(200).json(sendData);
+                                }
+                            })
+                        });
                         return;
 
                     }

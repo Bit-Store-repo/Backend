@@ -46,7 +46,7 @@ auth.post('/', (req, res) => {
                             "email": docs[0].email,
                             "userName": docs[0].userName,
                             "profPic": docs[0].profPic,
-                            "key": redisKey,
+                            "key": docs[0].key,
                             "verified": docs[0].verified
                         }
 
@@ -56,7 +56,7 @@ auth.post('/', (req, res) => {
                         return;
                     }
                     else {
-                        res.status(403).json({ message: "invalid password" });
+                        res.status(403).json({ message: "wrong password" });
                         return;
                     }
                 }
