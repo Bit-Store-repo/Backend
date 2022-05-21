@@ -21,6 +21,10 @@ app.use('/resetpassword', forgotRouter);
 const userRouter = require('./src/userFunc/userFunctions');
 app.use('/user', userRouter);
 
+app.get('/', (req, res) => {
+    res.send("hello");
+});
+
 app.listen(PORT, () => {
     console.log(`app is running on ${PORT}`);
 });
